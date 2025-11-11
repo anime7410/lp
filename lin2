@@ -1,0 +1,61 @@
+clc;
+clear all;
+close all;
+
+% ----- Input Sequences -----
+x = input('Enter the first sequence x(n): ');
+h = input('Enter the second sequence h(n): ');
+
+% ----- Length of Sequences -----
+lx = length(x);
+lh = length(h);
+
+% ----- 1) Linear Convolution using FFT & IFFT -----
+N1 = lx + lh - 1;       % required length for linear convolution
+X1 = fft(x, N1);        % DFT of x with zero padding
+H1 = fft(h, N1);        % DFT of h with zero padding
+Y_linear = X1 .* H1;    % Multiplication property in frequency domain
+y_linear_fft = ifft(Y_linear);  % IFFT to get linear convolution result
+
+disp(' ');
+disp('--- Linear Convolution using FFT & IFFT ---');
+disp(real(y_linear_fft));   % Display only real part (imag part should be ~0)
+
+% ----- 2) Circular Convolution using FFT & IFFT (No Zero Appending) -----
+N2 = max(lx, lh);       % minimum length for circular convolution
+X2 = fft(x, N2);
+H2 = fft(h, N2);
+Y_circular = X2 .* H2;
+y_circular_fft = ifft(Y_circular);
+
+disp(' ');
+disp('--- Circular Convolution using FFT & IFFT (Without Zero Appending) ---');
+disp(real(y_circular_fft));  % Display only real part
+
+% ----- 3) Verification -----
+disp(' ');
+disp('NOTE: If Circular Convolution is Zero-Padded to length (lx + lh - 1),');
+disp('it matches Linear Convolution.');
+
+% ----- Plot Magnitude and Phase Response -----
+figure;
+subplot(2,1,1);
+stem(abs(y_linear_fft),'filled');
+title('Magnitude of Linear Convolution');
+xlabel('Sample Index'); ylabel('Magnitude'); grid on;
+
+subplot(2,1,2);
+stem(angle(y_linear_fft),'filled');
+title('Phase of Linear Convolution');
+xlabel('Sample Index'); ylabel('Phase (Radians)'); grid on;
+
+figure;
+subplot(2,1,1);
+stem(abs(y_circular_fft),'filled');
+title('Magnitude of Circular Convolution');
+xlabel('Sample Index'); ylabel('Magnitude'); grid on;
+
+subplot(2,1,2);
+stem(angle(y_circular_fft),'filled');
+title('Phase of Circular Convolution');
+xlabel('Sample Index'); ylabel('Phase (Radians)'); grid on;
