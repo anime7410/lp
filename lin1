@@ -1,0 +1,60 @@
+clc;
+clear all;
+close all;
+
+% ----- Input Sequences -----
+x = input('Enter first sequence x(n): ');
+h = input('Enter second sequence h(n): ');
+
+% ----- Length of sequences -----
+lx = length(x);
+lh = length(h);
+
+% ----- 1) Linear Convolution (without zero appending) -----
+y_linear = conv(x, h);
+disp(' ');
+disp('--- Linear Convolution Result ---');
+disp(y_linear);
+
+% ----- 2) Circular Convolution WITHOUT Zero Appending -----
+N1 = max(lx, lh);  % Minimum length
+x1 = [x zeros(1, N1 - lx)];
+h1 = [h zeros(1, N1 - lh)];
+
+y_circ_nozero = cconv(x1, h1, N1);
+disp(' ');
+disp('--- Circular Convolution (Without Zero Appending) Result ---');
+disp(y_circ_nozero);
+
+% ----- 3) Circular Convolution WITH Zero Appending -----
+N2 = lx + lh - 1;  % Total length for zero-padded circular convolution
+x2 = [x zeros(1, N2 - lx)];
+h2 = [h zeros(1, N2 - lh)];
+
+y_circ_zero = cconv(x2, h2, N2);
+disp(' ');
+disp('--- Circular Convolution (With Zero Appending) Result ---');
+disp(y_circ_zero);
+
+% ----- Verification -----
+disp(' ');
+disp('--- Verification: Linear Convolution vs Zero-Padded Circular Convolution ---');
+disp([y_linear; y_circ_zero]);
+
+% ----- Plot Results -----
+figure;
+subplot(3,1,1);
+stem(y_linear,'filled'); 
+title('Linear Convolution');
+xlabel('n'); ylabel('Amplitude'); grid on;
+
+subplot(3,1,2);
+stem(y_circ_nozero,'filled'); 
+title('Circular Convolution (Without Zero Appending)');
+xlabel('n'); ylabel('Amplitude'); grid on;
+
+subplot(3,1,3);
+stem(y_circ_zero,'filled'); 
+title('Circular Convolution (With Zero Appending)');
+xlabel('n'); ylabel('Amplitude'); grid on;
+lin 1
